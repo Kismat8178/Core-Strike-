@@ -55,7 +55,7 @@
 
         .panel {
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             background: rgba(15, 23, 42, 0.94);
             border: 1px solid rgba(56, 189, 248, 0.25);
             border-radius: 16px;
@@ -120,6 +120,7 @@
         .btn.amber { background: #d97706; }
         .btn.slate { background: #334155; }
         .btn.rose { background: #e11d48; }
+        .btn.purple { background: #7c3aed; }
 
         .status-line {
             margin-top: 12px;
@@ -168,10 +169,10 @@
         /* ARENA & COMBAT UI */
         .arena-wrap {
             width: 100%;
-            max-width: 640px;
+            max-width: 680px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 11px;
         }
 
         .top-meta {
@@ -188,9 +189,19 @@
 
         .room-tag {
             font-family: monospace;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             font-weight: 800;
             color: #fbbf24;
+        }
+
+        .coin-chip {
+            background: rgba(251, 191, 36, 0.16);
+            border: 1px solid rgba(251, 191, 36, 0.45);
+            color: #fbbf24;
+            font-weight: 900;
+            font-size: 0.82rem;
+            padding: 5px 10px;
+            border-radius: 999px;
         }
 
         .turn-banner {
@@ -304,15 +315,29 @@
             transition: width 0.25s ease;
         }
 
+        .status-row-tags {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+            min-height: 22px;
+        }
+
         .guard-tag {
             display: inline-block;
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 800;
             color: #fbbf24;
             background: rgba(251, 191, 36, 0.14);
             border: 1px solid rgba(251, 191, 36, 0.4);
             padding: 2px 8px;
             border-radius: 6px;
+        }
+
+        .wallet-tag {
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: #fbbf24;
         }
 
         .reaction-bubble {
@@ -332,6 +357,33 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px;
             padding: 14px;
+        }
+
+        .utility-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .overdrive-btn {
+            background: #1e293b;
+            border: 1px solid #a855f7;
+            color: #e9d5ff;
+            border-radius: 9px;
+            padding: 7px 12px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .overdrive-btn.active {
+            background: #9333ea;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.55);
         }
 
         .moves-grid {
@@ -384,24 +436,68 @@
             border-radius: 6px;
         }
 
-        /* EMOJI REACTIONS */
-        .emoji-strip {
+        .battle-log-box {
+            margin-top: 8px;
+            max-height: 76px;
+            overflow-y: auto;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            background: #0b111d;
+            border-radius: 8px;
+            padding: 7px 10px;
             display: flex;
-            gap: 6px;
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 3px;
         }
 
-        .emoji-btn {
+        /* TACTICAL SHOP PANEL */
+        .shop-panel {
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        @media (max-width: 500px) {
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .shop-item-btn {
             background: #1e293b;
             border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 5px 9px;
-            font-size: 1rem;
+            border-radius: 10px;
+            padding: 10px;
+            color: #f8fafc;
+            text-align: left;
             cursor: pointer;
         }
 
-        /* CHAT SECTION */
+        .shop-item-btn:hover:not(:disabled) {
+            border-color: #fbbf24;
+            background: #263449;
+        }
+
+        .shop-item-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        /* EMOJI REACTIONS & CHAT SECTION */
         .chat-panel {
             background: rgba(15, 23, 42, 0.94);
             border: 1px solid rgba(56, 189, 248, 0.25);
@@ -412,8 +508,70 @@
             gap: 8px;
         }
 
+        .chat-toolbar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .emoji-strip, .preset-strip {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .emoji-btn {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 5px 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .preset-btn {
+            background: #1e293b;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: #bae6fd;
+            border-radius: 8px;
+            padding: 5px 9px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .preset-btn:hover {
+            background: #24354d;
+        }
+
+        .mini-btn {
+            background: #334155;
+            border: none;
+            color: #f1f5f9;
+            border-radius: 7px;
+            padding: 5px 9px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .chat-search-input {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
         .chat-feed {
-            height: 135px;
+            height: 130px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -447,7 +605,7 @@
 
             <div class="input-group">
                 <label>Username</label>
-                <input type="text" id="username-input" maxlength="14" value="Player" placeholder="Enter your username">
+                <input type="text" id="username-input" maxlength="24" value="Player" placeholder="Enter your username">
             </div>
 
             <div class="input-group">
@@ -486,17 +644,53 @@
     <div id="game-screen" class="screen hidden">
         <div class="arena-wrap">
             <div class="top-meta">
-                <div>
+                <div style="display:flex; align-items:center; gap:6px;">
                     <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">ROOM:</span>
                     <span id="active-room-code" class="room-tag">------</span>
+                    <button id="copy-code-btn" class="mini-btn" title="Copy Room Code">Copy</button>
                 </div>
-                <div style="font-size:0.82rem; font-weight:800; color:#cbd5e1;">
-                    TURN <span id="turn-count-display">1</span>
+
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span id="my-coins-chip" class="coin-chip">$0</span>
+                    <span style="font-size:0.82rem; font-weight:800; color:#cbd5e1;">
+                        TURN <span id="turn-count-display">1</span>
+                    </span>
                 </div>
-                <button id="exit-room-btn" class="btn slate" style="flex:0; padding:7px 12px; font-size:0.78rem;">Lobby</button>
+
+                <div style="display:flex; gap:6px;">
+                    <button id="toggle-shop-btn" class="btn amber" style="flex:0; padding:7px 11px; font-size:0.76rem;">Shop</button>
+                    <button id="forfeit-btn" class="btn rose" style="flex:0; padding:7px 10px; font-size:0.76rem;">Forfeit</button>
+                    <button id="exit-room-btn" class="btn slate" style="flex:0; padding:7px 11px; font-size:0.76rem;">Lobby</button>
+                </div>
             </div>
 
             <div id="turn-banner" class="turn-banner turn-waiting">SYNCING TURN...</div>
+
+            <!-- TACTICAL SHOP -->
+            <div id="shop-panel" class="shop-panel hidden">
+                <div class="shop-header">
+                    <span style="font-weight:900; font-size:0.92rem; color:#fbbf24;">TACTICAL SHOP</span>
+                    <span id="shop-balance-label" style="font-weight:800; font-size:0.84rem; color:#fbbf24;">Coins: $0</span>
+                </div>
+                <div class="shop-grid">
+                    <button class="shop-item-btn" data-item="medkit">
+                        <strong style="display:block; font-size:0.85rem;">Medkit — $25</strong>
+                        <span style="font-size:0.74rem; color:#94a3b8;">Restore +35 HP immediately</span>
+                    </button>
+                    <button class="shop-item-btn" data-item="battery">
+                        <strong style="display:block; font-size:0.85rem;">Battery — $20</strong>
+                        <span style="font-size:0.74rem; color:#94a3b8;">Gain +20 Energy immediately</span>
+                    </button>
+                    <button class="shop-item-btn" data-item="core">
+                        <strong style="display:block; font-size:0.85rem;">Overcharge Core — $10</strong>
+                        <span style="font-size:0.74rem; color:#94a3b8;">Gain +15 Coins & +10 Energy</span>
+                    </button>
+                    <button class="shop-item-btn" data-item="aegis">
+                        <strong style="display:block; font-size:0.85rem;">Aegis Shield — $30</strong>
+                        <span style="font-size:0.74rem; color:#94a3b8;">Activate Guard +10 HP</span>
+                    </button>
+                </div>
+            </div>
 
             <div class="fighters-grid">
                 <!-- PLAYER 1 CARD -->
@@ -513,7 +707,10 @@
                     <div class="bar-track"><div id="p1-hp-bar" class="hp-fill" style="width:100%;"></div></div>
                     <div class="stat-label"><span>Energy</span><span id="p1-ep-text">50 / 50</span></div>
                     <div class="bar-track"><div id="p1-ep-bar" class="ep-fill" style="width:100%;"></div></div>
-                    <div id="p1-guard" class="guard-tag hidden">GUARD ACTIVE (-65% DMG)</div>
+                    <div class="status-row-tags">
+                        <span id="p1-guard" class="guard-tag hidden">GUARD (-65% DMG)</span>
+                        <span id="p1-coins" class="wallet-tag">$0</span>
+                    </div>
                 </div>
 
                 <!-- PLAYER 2 CARD -->
@@ -530,28 +727,36 @@
                     <div class="bar-track"><div id="p2-hp-bar" class="hp-fill" style="width:100%;"></div></div>
                     <div class="stat-label"><span>Energy</span><span id="p2-ep-text">50 / 50</span></div>
                     <div class="bar-track"><div id="p2-ep-bar" class="ep-fill" style="width:100%;"></div></div>
-                    <div id="p2-guard" class="guard-tag hidden">GUARD ACTIVE (-65% DMG)</div>
+                    <div class="status-row-tags">
+                        <span id="p2-guard" class="guard-tag hidden">GUARD (-65% DMG)</span>
+                        <span id="p2-coins" class="wallet-tag">$0</span>
+                    </div>
                 </div>
             </div>
 
             <!-- ACTION CONTROLS OR REMATCH PROMPT -->
             <div class="action-card">
+                <div class="utility-bar">
+                    <button id="overdrive-toggle" class="overdrive-btn hidden">2X OVERDRIVE: OFF</button>
+                    <span id="overdrive-hint" style="font-size:0.74rem; color:#c084fc; font-weight:700;"></span>
+                </div>
+
                 <div id="moves-panel" class="moves-grid">
                     <button id="act-attack" class="move-btn" data-action="attack">
-                        <span class="move-name">Attack</span>
-                        <span class="move-desc">Deal 18 DMG • +10 Energy</span>
+                        <span class="move-name" id="lbl-attack">Attack</span>
+                        <span class="move-desc" id="desc-attack">Deal 18 DMG • +10 Energy</span>
                     </button>
                     <button id="act-defend" class="move-btn" data-action="defend">
                         <span class="move-name">Defend</span>
                         <span class="move-desc">Block 65% next hit • +12 Energy</span>
                     </button>
                     <button id="act-heal" class="move-btn" data-action="heal">
-                        <span class="move-name">Heal</span>
-                        <span class="move-desc">Restore 20 HP • +8 Energy</span>
+                        <span class="move-name" id="lbl-heal">Heal</span>
+                        <span class="move-desc" id="desc-heal">Restore 20 HP • +8 Energy</span>
                     </button>
                     <button id="act-special" class="move-btn" data-action="special">
-                        <span class="move-name">Special (25 EP)</span>
-                        <span class="move-desc">34 Piercing DMG • Breaks Guard</span>
+                        <span class="move-name" id="lbl-special">Special (25 EP)</span>
+                        <span class="move-desc" id="desc-special">34 Piercing DMG • Breaks Guard</span>
                     </button>
                 </div>
 
@@ -564,18 +769,31 @@
                 </div>
 
                 <div id="last-action-log" class="last-action-box">Waiting for first move...</div>
+                <div id="battle-log" class="battle-log-box"></div>
             </div>
 
-            <!-- EMOJI REACTIONS & CHAT -->
+            <!-- EMOJI REACTIONS, QUICK PRESETS, SEARCH & CHAT -->
             <div class="chat-panel">
-                <div class="emoji-strip">
-                    <span style="font-size:0.75rem; font-weight:800; color:#94a3b8; margin-right:4px;">REACT:</span>
-                    <button class="emoji-btn" data-emoji="🔥">🔥</button>
-                    <button class="emoji-btn" data-emoji="🛡️">🛡️</button>
-                    <button class="emoji-btn" data-emoji="⚡">⚡</button>
-                    <button class="emoji-btn" data-emoji="gg">GG</button>
-                    <button class="emoji-btn" data-emoji="👀">👀</button>
+                <div class="chat-toolbar">
+                    <div class="emoji-strip">
+                        <span style="font-size:0.74rem; font-weight:800; color:#94a3b8;">REACT:</span>
+                        <button class="emoji-btn" data-emoji="🔥">🔥</button>
+                        <button class="emoji-btn" data-emoji="🛡️">🛡️</button>
+                        <button class="emoji-btn" data-emoji="⚡">⚡</button>
+                        <button class="emoji-btn" data-emoji="gg">GG</button>
+                        <button class="emoji-btn" data-emoji="👀">👀</button>
+                    </div>
+                    <button id="clear-chat-btn" class="mini-btn" type="button">Clear View</button>
                 </div>
+
+                <div class="preset-strip">
+                    <button class="preset-btn" type="button" data-preset="Your move!">Your move!</button>
+                    <button class="preset-btn" type="button" data-preset="Nice hit!">Nice hit!</button>
+                    <button class="preset-btn" type="button" data-preset="Wait a sec...">Wait a sec...</button>
+                    <button class="preset-btn" type="button" data-preset="GG!">GG!</button>
+                </div>
+
+                <input type="text" id="chat-search" class="chat-search-input" placeholder="Search messages...">
 
                 <div id="chat-feed" class="chat-feed"></div>
 
@@ -589,7 +807,7 @@
 
     <script>
         /* =========================================================================
-           FIREBASE CONFIGURATION (SHARED PROJECT)
+           FIREBASE CONFIGURATION (UNCHANGED)
            ========================================================================= */
         const firebaseConfig = {
             apiKey: "AIzaSyCtjyvXA2LEhHrQ34m-iYovP0Mmm8VSZX0",
@@ -604,13 +822,19 @@
         const db = firebase.database();
 
         /* =========================================================================
-           STATE & CONSTANTS
+           CONSTANTS & STATE
            ========================================================================= */
         const MAX_HP = 100;
         const MAX_EP = 50;
+        const TURN_COIN_BONUS = 15;
+        const WIN_COIN_BONUS = 60;
 
         let mySeat = 1; // 1 or 2
+        let myRawName = "Player";
         let myName = "Player";
+        let hasOverdriveUnlocked = false;
+        let overdriveActive = false;
+
         let myColor = "#38bdf8";
         let currentRoomCode = null;
         let roomRef = null;
@@ -618,6 +842,53 @@
 
         let roomData = null;
         let matchRecorded = false;
+        let chatHistoryCache = [];
+
+        /* =========================================================================
+           [23] SECRET NAME PARSER
+           ========================================================================= */
+        function parsePlayerName(rawInput) {
+            const trimmed = (rawInput || "").trim() || "Player";
+            const unlocked = trimmed.includes("[23]");
+            const cleaned = trimmed.replace(/\[23\]/g, "").replace(/\s{2,}/g, " ").trim() || "Player";
+            return { displayName: cleaned, unlocked };
+        }
+
+        function refreshNameTriggerFromInput() {
+            const parsed = parsePlayerName(document.getElementById('username-input').value);
+            myName = parsed.displayName;
+            hasOverdriveUnlocked = parsed.unlocked;
+            if (!hasOverdriveUnlocked) overdriveActive = false;
+            updateOverdriveUI();
+        }
+
+        document.getElementById('username-input').addEventListener('input', refreshNameTriggerFromInput);
+
+        function updateOverdriveUI() {
+            const btn = document.getElementById('overdrive-toggle');
+            const hint = document.getElementById('overdrive-hint');
+            if (!hasOverdriveUnlocked) {
+                btn.classList.add('hidden');
+                hint.textContent = "";
+                overdriveActive = false;
+            } else {
+                btn.classList.remove('hidden');
+                btn.classList.toggle('active', overdriveActive);
+                btn.textContent = overdriveActive ? "2X OVERDRIVE: ON" : "2X OVERDRIVE: OFF";
+                hint.textContent = overdriveActive ? "2X Attack, Special & Heal active!" : "Toggle for 2X power";
+            }
+
+            const mult = overdriveActive ? 2 : 1;
+            document.getElementById('desc-attack').textContent = `Deal ${18 * mult} DMG • +10 Energy`;
+            document.getElementById('desc-heal').textContent = `Restore ${20 * mult} HP • +8 Energy`;
+            document.getElementById('desc-special').textContent = `${34 * mult} Piercing DMG • Breaks Guard`;
+        }
+
+        document.getElementById('overdrive-toggle').addEventListener('click', () => {
+            if (!hasOverdriveUnlocked) return;
+            overdriveActive = !overdriveActive;
+            updateOverdriveUI();
+        });
 
         /* =========================================================================
            MATCH HISTORY FEED
@@ -644,39 +915,44 @@
         listenMatchHistory();
 
         /* =========================================================================
-           CREATE / JOIN / RESUME ROOM (ASYNCHRONOUS FRIENDLY)
+           CREATE / JOIN / RESUME ROOM (UNCHANGED CORE LOGIC)
            ========================================================================= */
         const lobbyStatus = document.getElementById('lobby-status');
 
         function createInitialMatchState(p1Profile, p2Profile) {
             const firstTurn = Math.random() < 0.5 ? 1 : 2;
             const starterName = firstTurn === 1 ? p1Profile.name : p2Profile.name;
+            const starterCoins = firstTurn === 1 ? 15 : 0;
+            const p2Coins = firstTurn === 2 ? 15 : 0;
             return {
                 turnSeat: firstTurn,
                 turnNumber: 1,
                 status: 'active',
                 winnerSeat: null,
                 winnerName: null,
-                lastAction: `Match started! ${starterName} goes first.`,
+                lastAction: `Match started! ${starterName} goes first (+$15 turn coin).`,
+                logs: [`Turn 1: ${starterName} goes first.`],
                 p1: {
                     name: p1Profile.name,
                     color: p1Profile.color,
                     hp: MAX_HP,
                     ep: MAX_EP,
-                    guard: false
+                    guard: false,
+                    coins: starterCoins
                 },
                 p2: {
                     name: p2Profile.name,
                     color: p2Profile.color,
                     hp: MAX_HP,
                     ep: MAX_EP,
-                    guard: false
+                    guard: false,
+                    coins: p2Coins
                 }
             };
         }
 
         document.getElementById('create-room-btn').addEventListener('click', () => {
-            myName = document.getElementById('username-input').value.trim() || "Player 1";
+            refreshNameTriggerFromInput();
             myColor = document.getElementById('color-select').value;
             const code = Math.floor(100000 + Math.random() * 900000).toString();
             document.getElementById('room-code-input').value = code;
@@ -700,13 +976,13 @@
         });
 
         document.getElementById('join-room-btn').addEventListener('click', () => {
+            refreshNameTriggerFromInput();
             const code = document.getElementById('room-code-input').value.trim();
             if (code.length !== 6) {
                 lobbyStatus.textContent = "Enter a 6-digit room code.";
                 return;
             }
 
-            myName = document.getElementById('username-input').value.trim() || "Player";
             myColor = document.getElementById('color-select').value;
             currentRoomCode = code;
             roomRef = db.ref('turnbound_rooms/' + code);
@@ -736,7 +1012,6 @@
                         }
                     });
                 } else {
-                    // Spectator / third visitor can still view & chat, or resume seat 2
                     mySeat = 2;
                 }
 
@@ -765,7 +1040,6 @@
                 if (!snap.exists()) return;
                 roomData = snap.val();
 
-                // If host created room and guest has joined, ensure match exists
                 if (mySeat === 1 && roomData.p1 && roomData.p2 && !roomData.match) {
                     roomRef.child('match').set(createInitialMatchState(roomData.p1, roomData.p2));
                 }
@@ -773,19 +1047,13 @@
                 renderArena();
             });
 
-            // Chat stream (persists even if players return later)
-            const feed = document.getElementById('chat-feed');
-            feed.innerHTML = '';
-            roomRef.child('chat').limitToLast(40).on('child_added', cSnap => {
+            chatHistoryCache = [];
+            roomRef.child('chat').limitToLast(60).on('child_added', cSnap => {
                 const m = cSnap.val();
-                const div = document.createElement('div');
-                div.className = 'chat-msg';
-                div.innerHTML = `<strong style="color:${escapeAttr(m.color || '#38bdf8')}">${escapeHtml(m.sender)}:</strong> ${escapeHtml(m.text)}`;
-                feed.appendChild(div);
-                feed.scrollTop = feed.scrollHeight;
+                chatHistoryCache.push(m);
+                renderFilteredChat();
             });
 
-            // Emoji reaction listener
             roomRef.child('reaction').on('value', rSnap => {
                 if (!rSnap.exists()) return;
                 const rx = rSnap.val();
@@ -804,12 +1072,19 @@
             document.getElementById('game-screen').classList.remove('hidden');
             document.getElementById('active-room-code').textContent = code;
             matchRecorded = false;
+            updateOverdriveUI();
             renderArena();
         }
 
         /* =========================================================================
-           TURN ACTIONS (ATTACK, DEFEND, HEAL, SPECIAL)
+           TURN ACTIONS & COINS
            ========================================================================= */
+        function appendBattleLog(matchObj, line) {
+            const arr = Array.isArray(matchObj.logs) ? matchObj.logs.slice(-14) : [];
+            arr.push(line);
+            matchObj.logs = arr;
+        }
+
         document.querySelectorAll('.move-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const action = btn.dataset.action;
@@ -824,46 +1099,138 @@
 
             const actor = mySeat === 1 ? m.p1 : m.p2;
             const foe = mySeat === 1 ? m.p2 : m.p1;
+            actor.coins = actor.coins || 0;
+            foe.coins = foe.coins || 0;
+
+            const mult = (mySeat === 1 ? 1 : 1) * (overdriveActive && hasOverdriveUnlocked ? 2 : 1);
 
             if (action === 'attack') {
-                const rawDmg = 18;
+                const rawDmg = 18 * mult;
                 const finalDmg = foe.guard ? Math.round(rawDmg * 0.35) : rawDmg;
                 foe.hp = Math.max(0, foe.hp - finalDmg);
                 foe.guard = false;
                 actor.ep = Math.min(MAX_EP, actor.ep + 10);
-                m.lastAction = `${actor.name} attacked ${foe.name} for ${finalDmg} DMG.`;
+                const hitCoins = Math.max(5, Math.round(finalDmg * 0.5));
+                actor.coins += hitCoins;
+                m.lastAction = `${actor.name} attacked ${foe.name} for ${finalDmg} DMG (+$${hitCoins}).`;
+                appendBattleLog(m, m.lastAction);
             } else if (action === 'defend') {
                 actor.guard = true;
                 actor.ep = Math.min(MAX_EP, actor.ep + 12);
                 m.lastAction = `${actor.name} raised Guard (-65% incoming DMG).`;
+                appendBattleLog(m, m.lastAction);
             } else if (action === 'heal') {
-                const healed = Math.min(MAX_HP - actor.hp, 20);
+                const healAmount = 20 * mult;
+                const healed = Math.min(MAX_HP - actor.hp, healAmount);
                 actor.hp += healed;
                 actor.ep = Math.min(MAX_EP, actor.ep + 8);
                 m.lastAction = `${actor.name} healed +${healed} HP.`;
+                appendBattleLog(m, m.lastAction);
             } else if (action === 'special') {
                 if (actor.ep < 25) return;
                 actor.ep -= 25;
-                // Piercing strike ignores guard
-                const pierceDmg = 34;
+                const pierceDmg = 34 * mult;
                 foe.hp = Math.max(0, foe.hp - pierceDmg);
                 foe.guard = false;
-                m.lastAction = `${actor.name} unleashed SPECIAL on ${foe.name} for ${pierceDmg} piercing DMG!`;
+                const burstCoins = Math.max(10, Math.round(pierceDmg * 0.5));
+                actor.coins += burstCoins;
+                m.lastAction = `${actor.name} unleashed SPECIAL on ${foe.name} for ${pierceDmg} piercing DMG (+$${burstCoins})!`;
+                appendBattleLog(m, m.lastAction);
             }
 
             if (foe.hp <= 0) {
+                actor.coins += WIN_COIN_BONUS;
                 m.status = 'finished';
                 m.winnerSeat = mySeat;
                 m.winnerName = actor.name;
-                m.lastAction += ` ${actor.name} wins the match!`;
+                m.lastAction += ` ${actor.name} wins (+$${WIN_COIN_BONUS} victory bonus)!`;
+                appendBattleLog(m, `${actor.name} won the match!`);
                 recordMatchHistory(m);
             } else {
-                m.turnSeat = mySeat === 1 ? 2 : 1;
+                const nextSeat = mySeat === 1 ? 2 : 1;
+                const nextPlayer = nextSeat === 1 ? m.p1 : m.p2;
+                nextPlayer.coins = (nextPlayer.coins || 0) + TURN_COIN_BONUS;
+                m.turnSeat = nextSeat;
                 m.turnNumber += 1;
             }
 
             roomRef.child('match').set(m);
         }
+
+        /* =========================================================================
+           TACTICAL SHOP
+           ========================================================================= */
+        document.getElementById('toggle-shop-btn').addEventListener('click', () => {
+            document.getElementById('shop-panel').classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.shop-item-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                buyShopItem(btn.dataset.item);
+            });
+        });
+
+        function buyShopItem(itemId) {
+            if (!roomRef || !roomData || !roomData.match) return;
+            const m = JSON.parse(JSON.stringify(roomData.match));
+            if (m.status !== 'active') return;
+
+            const buyer = mySeat === 1 ? m.p1 : m.p2;
+            buyer.coins = buyer.coins || 0;
+
+            if (itemId === 'medkit') {
+                if (buyer.coins < 25) return;
+                buyer.coins -= 25;
+                const healed = Math.min(MAX_HP - buyer.hp, 35);
+                buyer.hp += healed;
+                m.lastAction = `${buyer.name} bought Medkit (+${healed} HP).`;
+                appendBattleLog(m, m.lastAction);
+            } else if (itemId === 'battery') {
+                if (buyer.coins < 20) return;
+                buyer.coins -= 20;
+                buyer.ep = Math.min(MAX_EP, buyer.ep + 20);
+                m.lastAction = `${buyer.name} bought Battery (+20 Energy).`;
+                appendBattleLog(m, m.lastAction);
+            } else if (itemId === 'core') {
+                if (buyer.coins < 10) return;
+                buyer.coins -= 10;
+                buyer.coins += 15;
+                buyer.ep = Math.min(MAX_EP, buyer.ep + 10);
+                m.lastAction = `${buyer.name} used Overcharge Core (+$15 net & +10 Energy).`;
+                appendBattleLog(m, m.lastAction);
+            } else if (itemId === 'aegis') {
+                if (buyer.coins < 30) return;
+                buyer.coins -= 30;
+                buyer.guard = true;
+                buyer.hp = Math.min(MAX_HP, buyer.hp + 10);
+                m.lastAction = `${buyer.name} equipped Aegis Shield (Guard +10 HP).`;
+                appendBattleLog(m, m.lastAction);
+            }
+
+            roomRef.child('match').set(m);
+        }
+
+        /* =========================================================================
+           FORFEIT, REMATCH & HISTORY
+           ========================================================================= */
+        document.getElementById('forfeit-btn').addEventListener('click', () => {
+            if (!roomRef || !roomData || !roomData.match) return;
+            const m = JSON.parse(JSON.stringify(roomData.match));
+            if (m.status !== 'active') return;
+
+            const winSeat = mySeat === 1 ? 2 : 1;
+            const winPlayer = winSeat === 1 ? m.p1 : m.p2;
+            const losePlayer = mySeat === 1 ? m.p1 : m.p2;
+
+            winPlayer.coins = (winPlayer.coins || 0) + WIN_COIN_BONUS;
+            m.status = 'finished';
+            m.winnerSeat = winSeat;
+            m.winnerName = winPlayer.name;
+            m.lastAction = `${losePlayer.name} forfeited. ${winPlayer.name} wins!`;
+            appendBattleLog(m, m.lastAction);
+            recordMatchHistory(m);
+            roomRef.child('match').set(m);
+        });
 
         function recordMatchHistory(finishedMatch) {
             if (matchRecorded || !currentRoomCode) return;
@@ -882,9 +1249,6 @@
             });
         }
 
-        /* =========================================================================
-           REMATCH & CHAT & REACTIONS
-           ========================================================================= */
         document.getElementById('rematch-btn').addEventListener('click', () => {
             if (!roomRef || !roomData) return;
             const key = mySeat === 1 ? 'rematch/p1' : 'rematch/p2';
@@ -900,6 +1264,9 @@
             });
         });
 
+        /* =========================================================================
+           REACTIONS, QUICK PRESETS, SEARCH & CLEAR LOCAL CHAT
+           ========================================================================= */
         document.querySelectorAll('.emoji-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 if (!roomRef) return;
@@ -911,24 +1278,67 @@
             });
         });
 
-        document.getElementById('chat-form').addEventListener('submit', e => {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text || !roomRef) return;
-
+        function sendChatMessage(text) {
+            const clean = (text || "").trim();
+            if (!clean || !roomRef) return;
             roomRef.child('chat').push({
                 sender: myName,
                 color: myColor,
-                text: text,
+                text: clean,
                 at: Date.now()
             });
+        }
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                sendChatMessage(btn.dataset.preset);
+            });
+        });
+
+        document.getElementById('chat-search').addEventListener('input', renderFilteredChat);
+
+        document.getElementById('clear-chat-btn').addEventListener('click', () => {
+            chatHistoryCache = [];
+            document.getElementById('chat-feed').innerHTML = '';
+        });
+
+        function renderFilteredChat() {
+            const query = (document.getElementById('chat-search').value || "").trim().toLowerCase();
+            const feed = document.getElementById('chat-feed');
+            feed.innerHTML = '';
+
+            const matches = query
+                ? chatHistoryCache.filter(m =>
+                    (m.text && m.text.toLowerCase().includes(query)) ||
+                    (m.sender && m.sender.toLowerCase().includes(query))
+                )
+                : chatHistoryCache;
+
+            matches.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'chat-msg';
+                div.innerHTML = `<strong style="color:${escapeAttr(m.color || '#38bdf8')}">${escapeHtml(m.sender)}:</strong> ${escapeHtml(m.text)}`;
+                feed.appendChild(div);
+            });
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        document.getElementById('chat-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            sendChatMessage(input.value);
             input.value = "";
+        });
+
+        document.getElementById('copy-code-btn').addEventListener('click', () => {
+            if (!currentRoomCode || !navigator.clipboard) return;
+            navigator.clipboard.writeText(currentRoomCode).catch(() => {});
         });
 
         function leaveToLobby() {
             setOnlinePresence(false);
             if (roomRef) roomRef.off();
+            document.getElementById('shop-panel').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('lobby-screen').classList.remove('hidden');
             document.getElementById('lobby-status').textContent = currentRoomCode
@@ -950,11 +1360,11 @@
             const m = roomData.match;
             const pres = roomData.presence || {};
 
-            const p1State = m ? m.p1 : { name: p1Prof.name, color: p1Prof.color, hp: MAX_HP, ep: MAX_EP, guard: false };
-            const p2State = m ? m.p2 : { name: p2Prof.name, color: p2Prof.color, hp: MAX_HP, ep: MAX_EP, guard: false };
+            const p1State = m ? m.p1 : { name: p1Prof.name, color: p1Prof.color, hp: MAX_HP, ep: MAX_EP, guard: false, coins: 0 };
+            const p2State = m ? m.p2 : { name: p2Prof.name, color: p2Prof.color, hp: MAX_HP, ep: MAX_EP, guard: false, coins: 0 };
 
-            document.getElementById('p1-name').textContent = p1State.name;
-            document.getElementById('p2-name').textContent = p2State.name;
+            document.getElementById('p1-name').textContent = parsePlayerName(p1State.name).displayName;
+            document.getElementById('p2-name').textContent = parsePlayerName(p2State.name).displayName;
             document.getElementById('p1-badge').style.background = p1State.color;
             document.getElementById('p2-badge').style.background = p2State.color;
 
@@ -974,6 +1384,21 @@
             document.getElementById('p1-guard').classList.toggle('hidden', !p1State.guard);
             document.getElementById('p2-guard').classList.toggle('hidden', !p2State.guard);
 
+            const p1Coins = p1State.coins || 0;
+            const p2Coins = p2State.coins || 0;
+            document.getElementById('p1-coins').textContent = `$${p1Coins}`;
+            document.getElementById('p2-coins').textContent = `$${p2Coins}`;
+
+            const myCoins = mySeat === 1 ? p1Coins : p2Coins;
+            document.getElementById('my-coins-chip').textContent = `$${myCoins}`;
+            document.getElementById('shop-balance-label').textContent = `Coins: $${myCoins}`;
+
+            document.querySelectorAll('.shop-item-btn').forEach(btn => {
+                const item = btn.dataset.item;
+                const cost = item === 'medkit' ? 25 : item === 'battery' ? 20 : item === 'core' ? 10 : 30;
+                btn.disabled = !m || m.status !== 'active' || myCoins < cost;
+            });
+
             const banner = document.getElementById('turn-banner');
             const movesPanel = document.getElementById('moves-panel');
             const gameoverPanel = document.getElementById('gameover-panel');
@@ -990,6 +1415,11 @@
 
             document.getElementById('turn-count-display').textContent = m.turnNumber;
             document.getElementById('last-action-log').textContent = m.lastAction || "";
+
+            const logBox = document.getElementById('battle-log');
+            const logs = Array.isArray(m.logs) ? m.logs : [];
+            logBox.innerHTML = logs.map(l => `<div>• ${escapeHtml(l)}</div>`).join('');
+            logBox.scrollTop = logBox.scrollHeight;
 
             if (m.status === 'finished') {
                 banner.textContent = `MATCH FINISHED • ${m.winnerName} VICTORY`;
