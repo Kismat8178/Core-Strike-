@@ -120,7 +120,6 @@
         .btn.amber { background: #d97706; }
         .btn.slate { background: #334155; }
         .btn.rose { background: #e11d48; }
-        .btn.purple { background: #7c3aed; }
 
         .status-line {
             margin-top: 12px;
@@ -481,6 +480,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            gap: 8px;
         }
 
         .shop-grid {
@@ -706,10 +706,11 @@
 
             <div id="turn-banner" class="turn-banner turn-waiting">SYNCING TURN...</div>
 
-            <!-- TACTICAL SHOP -->
+            <!-- TACTICAL SHOP (1 PURCHASE PER TURN) -->
             <div id="shop-panel" class="shop-panel hidden">
                 <div class="shop-header">
                     <span style="font-weight:900; font-size:0.92rem; color:#fbbf24;">TACTICAL SHOP</span>
+                    <span id="shop-limit-badge" style="font-size:0.74rem; font-weight:800; color:#cbd5e1;">1 buy / turn</span>
                     <span id="shop-balance-label" style="font-weight:800; font-size:0.84rem; color:#fbbf24;">Coins: $0</span>
                 </div>
                 <div class="shop-grid">
@@ -878,7 +879,7 @@
         const MAX_EP = 50;
         const TURN_COIN_BONUS = 15;
         const WIN_COIN_BONUS = 60;
-        const FRIENDS_STORAGE_KEY = "turnbound_friends_v1";
+        const FRIENDS_STORAGE_KEY = "turnbound_friends_v2";
 
         let mySeat = 1; // 1 or 2
         let myName = "Player";
@@ -889,16 +890,22 @@
         let currentRoomCode = null;
         let roomRef = null;
         let presenceRef = null;
+        let friendsDbRef = null;
 
         let roomData = null;
         let matchRecorded = false;
         let writeLock = false;
         let chatHistoryCache = [];
+        let localFriendsCache = [];
 
         /* =========================================================================
-           FRIENDS & INVITE SYSTEM (LOCAL STORAGE + ROOM INVITE)
+           FRIENDS & INVITE SYSTEM (FIREBASE + LOCAL FALLBACK)
            ========================================================================= */
-        function loadFriends() {
+        function friendKey(name) {
+            return String(name || "").trim().toLowerCase().replace(/[.#$[\]/]/g, "_");
+        }
+
+        function loadLocalFriends() {
             try {
                 const raw = localStorage.getItem(FRIENDS_STORAGE_KEY);
                 const list = raw ? JSON.parse(raw) : [];
@@ -908,27 +915,67 @@
             }
         }
 
-        function saveFriends(list) {
+        function saveLocalFriends(list) {
             try {
                 localStorage.setItem(FRIENDS_STORAGE_KEY, JSON.stringify(list));
             } catch (_) {}
         }
 
+        function syncFriendsListener() {
+            if (friendsDbRef) friendsDbRef.off();
+            localFriendsCache = loadLocalFriends();
+            renderFriendsList();
+
+            const ownerKey = friendKey(myName);
+            if (!ownerKey) return;
+            friendsDbRef = db.ref('turnbound_friends/' + ownerKey);
+            friendsDbRef.on('value', snap => {
+                const merged = [...localFriendsCache];
+                if (snap.exists()) {
+                    snap.forEach(child => {
+                        const val = child.val();
+                        if (val && val.name && !merged.some(f => f.toLowerCase() === val.name.toLowerCase())) {
+                            merged.push(val.name);
+                        }
+                    });
+                }
+                localFriendsCache = merged;
+                saveLocalFriends(merged);
+                renderFriendsList();
+            });
+        }
+
         function addFriendByName(rawName) {
             const parsed = parsePlayerName(rawName);
             const clean = parsed.displayName;
-            if (!clean || clean === "Waiting for P2...") return;
-            const list = loadFriends();
-            if (!list.some(f => f.toLowerCase() === clean.toLowerCase())) {
-                list.push(clean);
-                saveFriends(list);
+            if (!clean || clean === "Waiting for P2...") {
+                lobbyStatus.textContent = "Enter a valid friend username.";
+                return;
+            }
+            if (!localFriendsCache.some(f => f.toLowerCase() === clean.toLowerCase())) {
+                localFriendsCache.push(clean);
+                saveLocalFriends(localFriendsCache);
+            }
+            const ownerKey = friendKey(myName);
+            const fKey = friendKey(clean);
+            if (ownerKey && fKey) {
+                db.ref('turnbound_friends/' + ownerKey + '/' + fKey).set({
+                    name: clean,
+                    addedAt: Date.now()
+                });
             }
             renderFriendsList();
+            lobbyStatus.textContent = `Added ${clean} to friends.`;
         }
 
         function removeFriendByName(name) {
-            const list = loadFriends().filter(f => f !== name);
-            saveFriends(list);
+            localFriendsCache = localFriendsCache.filter(f => f !== name);
+            saveLocalFriends(localFriendsCache);
+            const ownerKey = friendKey(myName);
+            const fKey = friendKey(name);
+            if (ownerKey && fKey) {
+                db.ref('turnbound_friends/' + ownerKey + '/' + fKey).remove();
+            }
             renderFriendsList();
         }
 
@@ -949,12 +996,12 @@
             if (roomRef) {
                 sendChatMessage(inviteText);
             }
-            lobbyStatus.textContent = `Invite ready for Room #${code} (copied to clipboard).`;
+            lobbyStatus.textContent = `Invite sent for Room #${code} (code copied).`;
         }
 
         function renderFriendsList() {
             const container = document.getElementById('friends-list');
-            const friends = loadFriends();
+            const friends = localFriendsCache;
             if (!friends.length) {
                 container.innerHTML = `<div class="friend-item" style="color:#94a3b8;">No friends added yet.</div>`;
                 return;
@@ -983,19 +1030,24 @@
             inp.value = "";
         });
 
+        document.getElementById('friend-name-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const inp = document.getElementById('friend-name-input');
+                addFriendByName(inp.value);
+                inp.value = "";
+            }
+        });
+
         document.getElementById('invite-room-btn').addEventListener('click', () => sendRoomInvite(null));
         document.getElementById('send-invite-btn').addEventListener('click', () => sendRoomInvite(null));
 
         document.getElementById('add-p1-friend-btn').addEventListener('click', () => {
-            const name = document.getElementById('p1-name').textContent;
-            addFriendByName(name);
+            addFriendByName(document.getElementById('p1-name').textContent);
         });
         document.getElementById('add-p2-friend-btn').addEventListener('click', () => {
-            const name = document.getElementById('p2-name').textContent;
-            addFriendByName(name);
+            addFriendByName(document.getElementById('p2-name').textContent);
         });
-
-        renderFriendsList();
 
         /* =========================================================================
            [23] SECRET NAME PARSER
@@ -1008,14 +1060,19 @@
         }
 
         function refreshNameTriggerFromInput() {
+            const prevName = myName;
             const parsed = parsePlayerName(document.getElementById('username-input').value);
             myName = parsed.displayName;
             hasOverdriveUnlocked = parsed.unlocked;
             if (!hasOverdriveUnlocked) overdriveActive = false;
             updateOverdriveUI();
+            if (prevName !== myName) {
+                syncFriendsListener();
+            }
         }
 
         document.getElementById('username-input').addEventListener('input', refreshNameTriggerFromInput);
+        refreshNameTriggerFromInput();
 
         function updateOverdriveUI() {
             const btn = document.getElementById('overdrive-toggle');
@@ -1089,6 +1146,7 @@
                 winnerName: null,
                 lastAction: `Match started! ${starterName} goes first (+$15 turn coin).`,
                 logs: [`Turn 1: ${starterName} goes first.`],
+                shopUsedTurn: { p1: 0, p2: 0 },
                 p1: {
                     name: p1Profile.name,
                     color: p1Profile.color,
@@ -1244,7 +1302,7 @@
         }
 
         /* =========================================================================
-           STABLE TRANSACTION MATCH UPDATES (NO OVERCHARGE LAG)
+           STABLE TRANSACTION MATCH UPDATES & ANTI-SPAM SHOP
            ========================================================================= */
         function appendBattleLog(matchObj, line) {
             const arr = Array.isArray(matchObj.logs) ? matchObj.logs.slice(-14) : [];
@@ -1354,7 +1412,7 @@
         }
 
         /* =========================================================================
-           TACTICAL SHOP (MEDKIT, BATTERY, AEGIS, EMBER BOMB)
+           TACTICAL SHOP (1 ITEM PER TURN LIMIT)
            ========================================================================= */
         document.getElementById('toggle-shop-btn').addEventListener('click', () => {
             document.getElementById('shop-panel').classList.toggle('hidden');
@@ -1366,12 +1424,22 @@
             });
         });
 
+        function hasBoughtThisTurn(m, seat) {
+            if (!m) return true;
+            const tracker = m.shopUsedTurn || { p1: 0, p2: 0 };
+            const usedTurn = seat === 1 ? (tracker.p1 || 0) : (tracker.p2 || 0);
+            return usedTurn === m.turnNumber;
+        }
+
         function buyShopItem(itemId) {
             if (!roomRef || !roomData || !roomData.match) return;
             commitMatchTransaction(m => {
+                if (hasBoughtThisTurn(m, mySeat)) return false;
+
                 const buyer = mySeat === 1 ? m.p1 : m.p2;
                 const foe = mySeat === 1 ? m.p2 : m.p1;
                 buyer.coins = buyer.coins || 0;
+                m.shopUsedTurn = m.shopUsedTurn || { p1: 0, p2: 0 };
 
                 if (itemId === 'medkit') {
                     if (buyer.coins < 25) return false;
@@ -1410,6 +1478,9 @@
                 } else {
                     return false;
                 }
+
+                if (mySeat === 1) m.shopUsedTurn.p1 = m.turnNumber;
+                else m.shopUsedTurn.p2 = m.turnNumber;
                 return true;
             });
         }
@@ -1596,10 +1667,15 @@
             document.getElementById('my-coins-chip').textContent = `$${myCoins}`;
             document.getElementById('shop-balance-label').textContent = `Coins: $${myCoins}`;
 
+            const shopAlreadyUsed = m ? hasBoughtThisTurn(m, mySeat) : true;
+            const limitBadge = document.getElementById('shop-limit-badge');
+            limitBadge.textContent = shopAlreadyUsed ? "Used this turn" : "1 buy available";
+            limitBadge.style.color = shopAlreadyUsed ? "#f87171" : "#34d399";
+
             document.querySelectorAll('.shop-item-btn').forEach(btn => {
                 const item = btn.dataset.item;
                 const cost = item === 'medkit' ? 25 : item === 'battery' ? 20 : item === 'ember' ? 25 : 30;
-                btn.disabled = writeLock || !m || m.status !== 'active' || myCoins < cost;
+                btn.disabled = writeLock || !m || m.status !== 'active' || shopAlreadyUsed || myCoins < cost;
             });
 
             const banner = document.getElementById('turn-banner');
