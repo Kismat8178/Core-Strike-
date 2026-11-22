@@ -120,7 +120,6 @@
         .btn.amber { background: #d97706; }
         .btn.slate { background: #334155; }
         .btn.rose { background: #e11d48; }
-        .btn.purple { background: #7c3aed; }
 
         .status-line {
             margin-top: 12px;
@@ -138,12 +137,18 @@
             padding-top: 14px;
         }
 
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
         .history-title {
             font-size: 0.8rem;
             font-weight: 800;
             text-transform: uppercase;
             color: #94a3b8;
-            margin-bottom: 8px;
             letter-spacing: 0.6px;
         }
 
@@ -397,7 +402,7 @@
             border: 1px solid #334155;
             color: #f8fafc;
             border-radius: 10px;
-            padding: 11px 10px;
+            padding: 10px;
             text-align: left;
             cursor: pointer;
             transition: border-color 0.15s ease, background 0.15s ease;
@@ -415,12 +420,12 @@
 
         .move-name {
             font-weight: 900;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             display: block;
         }
 
         .move-desc {
-            font-size: 0.74rem;
+            font-size: 0.73rem;
             color: #94a3b8;
             display: block;
             margin-top: 2px;
@@ -632,7 +637,10 @@
             <div id="lobby-status" class="status-line">Ready to connect</div>
 
             <div class="history-box">
-                <div class="history-title">Recent Match History</div>
+                <div class="history-header">
+                    <div class="history-title">Recent Match History</div>
+                    <button id="clear-history-btn" class="mini-btn" type="button">Clear Log</button>
+                </div>
                 <div id="history-list" class="history-list">
                     <div class="history-item" style="color:#94a3b8;">Loading match history...</div>
                 </div>
@@ -647,7 +655,7 @@
                 <div style="display:flex; align-items:center; gap:6px;">
                     <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">ROOM:</span>
                     <span id="active-room-code" class="room-tag">------</span>
-                    <button id="copy-code-btn" class="mini-btn" title="Copy Room Code">Copy</button>
+                    <button id="copy-code-btn" class="mini-btn" title="Copy Room Code" type="button">Copy</button>
                 </div>
 
                 <div style="display:flex; align-items:center; gap:8px;">
@@ -658,9 +666,9 @@
                 </div>
 
                 <div style="display:flex; gap:6px;">
-                    <button id="toggle-shop-btn" class="btn amber" style="flex:0; padding:7px 11px; font-size:0.76rem;">Shop</button>
-                    <button id="forfeit-btn" class="btn rose" style="flex:0; padding:7px 10px; font-size:0.76rem;">Forfeit</button>
-                    <button id="exit-room-btn" class="btn slate" style="flex:0; padding:7px 11px; font-size:0.76rem;">Lobby</button>
+                    <button id="toggle-shop-btn" class="btn amber" style="flex:0; padding:7px 11px; font-size:0.76rem;" type="button">Shop</button>
+                    <button id="forfeit-btn" class="btn rose" style="flex:0; padding:7px 10px; font-size:0.76rem;" type="button">Forfeit</button>
+                    <button id="exit-room-btn" class="btn slate" style="flex:0; padding:7px 11px; font-size:0.76rem;" type="button">Lobby</button>
                 </div>
             </div>
 
@@ -673,21 +681,25 @@
                     <span id="shop-balance-label" style="font-weight:800; font-size:0.84rem; color:#fbbf24;">Coins: $0</span>
                 </div>
                 <div class="shop-grid">
-                    <button class="shop-item-btn" data-item="medkit">
+                    <button class="shop-item-btn" data-item="medkit" type="button">
                         <strong style="display:block; font-size:0.85rem;">Medkit — $25</strong>
                         <span style="font-size:0.74rem; color:#94a3b8;">Restore +35 HP immediately</span>
                     </button>
-                    <button class="shop-item-btn" data-item="battery">
+                    <button class="shop-item-btn" data-item="battery" type="button">
                         <strong style="display:block; font-size:0.85rem;">Battery — $20</strong>
                         <span style="font-size:0.74rem; color:#94a3b8;">Gain +20 Energy immediately</span>
                     </button>
-                    <button class="shop-item-btn" data-item="core">
+                    <button class="shop-item-btn" data-item="core" type="button">
                         <strong style="display:block; font-size:0.85rem;">Overcharge Core — $10</strong>
                         <span style="font-size:0.74rem; color:#94a3b8;">Gain +15 Coins & +10 Energy</span>
                     </button>
-                    <button class="shop-item-btn" data-item="aegis">
+                    <button class="shop-item-btn" data-item="aegis" type="button">
                         <strong style="display:block; font-size:0.85rem;">Aegis Shield — $30</strong>
                         <span style="font-size:0.74rem; color:#94a3b8;">Activate Guard +10 HP</span>
+                    </button>
+                    <button class="shop-item-btn" data-item="ember" type="button" style="grid-column: 1 / -1;">
+                        <strong style="display:block; font-size:0.85rem;">Ember Bomb — $25</strong>
+                        <span style="font-size:0.74rem; color:#94a3b8;">Deal 20 piercing DMG directly to opponent</span>
                     </button>
                 </div>
             </div>
@@ -737,34 +749,38 @@
             <!-- ACTION CONTROLS OR REMATCH PROMPT -->
             <div class="action-card">
                 <div class="utility-bar">
-                    <button id="overdrive-toggle" class="overdrive-btn hidden">2X OVERDRIVE: OFF</button>
+                    <button id="overdrive-toggle" class="overdrive-btn hidden" type="button">2X OVERDRIVE: OFF</button>
                     <span id="overdrive-hint" style="font-size:0.74rem; color:#c084fc; font-weight:700;"></span>
                 </div>
 
                 <div id="moves-panel" class="moves-grid">
-                    <button id="act-attack" class="move-btn" data-action="attack">
+                    <button id="act-attack" class="move-btn" data-action="attack" type="button">
                         <span class="move-name" id="lbl-attack">Attack</span>
                         <span class="move-desc" id="desc-attack">Deal 18 DMG • +10 Energy</span>
                     </button>
-                    <button id="act-defend" class="move-btn" data-action="defend">
+                    <button id="act-defend" class="move-btn" data-action="defend" type="button">
                         <span class="move-name">Defend</span>
                         <span class="move-desc">Block 65% next hit • +12 Energy</span>
                     </button>
-                    <button id="act-heal" class="move-btn" data-action="heal">
+                    <button id="act-heal" class="move-btn" data-action="heal" type="button">
                         <span class="move-name" id="lbl-heal">Heal</span>
                         <span class="move-desc" id="desc-heal">Restore 20 HP • +8 Energy</span>
                     </button>
-                    <button id="act-special" class="move-btn" data-action="special">
+                    <button id="act-special" class="move-btn" data-action="special" type="button">
                         <span class="move-name" id="lbl-special">Special (25 EP)</span>
                         <span class="move-desc" id="desc-special">34 Piercing DMG • Breaks Guard</span>
+                    </button>
+                    <button id="act-focus" class="move-btn" data-action="focus" style="grid-column: 1 / -1;" type="button">
+                        <span class="move-name">Focus</span>
+                        <span class="move-desc">Gain +15 Energy & +5 HP</span>
                     </button>
                 </div>
 
                 <div id="gameover-panel" class="hidden" style="text-align:center;">
                     <div id="winner-banner" style="font-size:1.25rem; font-weight:900; color:#fbbf24; margin-bottom:10px;"></div>
                     <div class="btn-grid" style="margin-top:0;">
-                        <button id="rematch-btn" class="btn green">Request Rematch</button>
-                        <button id="back-lobby-btn" class="btn slate">Back to Lobby</button>
+                        <button id="rematch-btn" class="btn green" type="button">Request Rematch</button>
+                        <button id="back-lobby-btn" class="btn slate" type="button">Back to Lobby</button>
                     </div>
                 </div>
 
@@ -777,11 +793,11 @@
                 <div class="chat-toolbar">
                     <div class="emoji-strip">
                         <span style="font-size:0.74rem; font-weight:800; color:#94a3b8;">REACT:</span>
-                        <button class="emoji-btn" data-emoji="🔥">🔥</button>
-                        <button class="emoji-btn" data-emoji="🛡️">🛡️</button>
-                        <button class="emoji-btn" data-emoji="⚡">⚡</button>
-                        <button class="emoji-btn" data-emoji="gg">GG</button>
-                        <button class="emoji-btn" data-emoji="👀">👀</button>
+                        <button class="emoji-btn" data-emoji="🔥" type="button">🔥</button>
+                        <button class="emoji-btn" data-emoji="🛡️" type="button">🛡️</button>
+                        <button class="emoji-btn" data-emoji="⚡" type="button">⚡</button>
+                        <button class="emoji-btn" data-emoji="gg" type="button">GG</button>
+                        <button class="emoji-btn" data-emoji="👀" type="button">👀</button>
                     </div>
                     <button id="clear-chat-btn" class="mini-btn" type="button">Clear View</button>
                 </div>
@@ -830,7 +846,6 @@
         const WIN_COIN_BONUS = 60;
 
         let mySeat = 1; // 1 or 2
-        let myRawName = "Player";
         let myName = "Player";
         let hasOverdriveUnlocked = false;
         let overdriveActive = false;
@@ -913,6 +928,10 @@
             });
         }
         listenMatchHistory();
+
+        document.getElementById('clear-history-btn').addEventListener('click', () => {
+            db.ref('turnbound_history').remove();
+        });
 
         /* =========================================================================
            CREATE / JOIN / RESUME ROOM (UNCHANGED CORE LOGIC)
@@ -1032,8 +1051,15 @@
             }
         }
 
-        function attachRoomListeners(code) {
+        function detachRoomListeners() {
+            if (!roomRef) return;
             roomRef.off();
+            roomRef.child('chat').off();
+            roomRef.child('reaction').off();
+        }
+
+        function attachRoomListeners(code) {
+            detachRoomListeners();
             setOnlinePresence(true);
 
             roomRef.on('value', snap => {
@@ -1048,8 +1074,10 @@
             });
 
             chatHistoryCache = [];
+            document.getElementById('chat-feed').innerHTML = '';
             roomRef.child('chat').limitToLast(60).on('child_added', cSnap => {
                 const m = cSnap.val();
+                if (!m) return;
                 chatHistoryCache.push(m);
                 renderFilteredChat();
             });
@@ -1057,7 +1085,7 @@
             roomRef.child('reaction').on('value', rSnap => {
                 if (!rSnap.exists()) return;
                 const rx = rSnap.val();
-                if (Date.now() - rx.at > 8000) return;
+                if (!rx || Date.now() - rx.at > 8000) return;
                 const bubbleId = rx.seat === 1 ? 'p1-reaction' : 'p2-reaction';
                 const el = document.getElementById(bubbleId);
                 el.textContent = rx.emoji;
@@ -1102,7 +1130,7 @@
             actor.coins = actor.coins || 0;
             foe.coins = foe.coins || 0;
 
-            const mult = (mySeat === 1 ? 1 : 1) * (overdriveActive && hasOverdriveUnlocked ? 2 : 1);
+            const mult = overdriveActive && hasOverdriveUnlocked ? 2 : 1;
 
             if (action === 'attack') {
                 const rawDmg = 18 * mult;
@@ -1135,6 +1163,12 @@
                 const burstCoins = Math.max(10, Math.round(pierceDmg * 0.5));
                 actor.coins += burstCoins;
                 m.lastAction = `${actor.name} unleashed SPECIAL on ${foe.name} for ${pierceDmg} piercing DMG (+$${burstCoins})!`;
+                appendBattleLog(m, m.lastAction);
+            } else if (action === 'focus') {
+                actor.ep = Math.min(MAX_EP, actor.ep + 15);
+                const gainedHp = Math.min(MAX_HP - actor.hp, 5);
+                actor.hp += gainedHp;
+                m.lastAction = `${actor.name} focused (+15 Energy, +${gainedHp} HP).`;
                 appendBattleLog(m, m.lastAction);
             }
 
@@ -1176,6 +1210,7 @@
             if (m.status !== 'active') return;
 
             const buyer = mySeat === 1 ? m.p1 : m.p2;
+            const foe = mySeat === 1 ? m.p2 : m.p1;
             buyer.coins = buyer.coins || 0;
 
             if (itemId === 'medkit') {
@@ -1205,6 +1240,20 @@
                 buyer.hp = Math.min(MAX_HP, buyer.hp + 10);
                 m.lastAction = `${buyer.name} equipped Aegis Shield (Guard +10 HP).`;
                 appendBattleLog(m, m.lastAction);
+            } else if (itemId === 'ember') {
+                if (buyer.coins < 25) return;
+                buyer.coins -= 25;
+                foe.hp = Math.max(0, foe.hp - 20);
+                m.lastAction = `${buyer.name} threw Ember Bomb at ${foe.name} for 20 piercing DMG!`;
+                appendBattleLog(m, m.lastAction);
+                if (foe.hp <= 0) {
+                    buyer.coins += WIN_COIN_BONUS;
+                    m.status = 'finished';
+                    m.winnerSeat = mySeat;
+                    m.winnerName = buyer.name;
+                    m.lastAction += ` ${buyer.name} wins (+$${WIN_COIN_BONUS} victory bonus)!`;
+                    recordMatchHistory(m);
+                }
             }
 
             roomRef.child('match').set(m);
@@ -1337,7 +1386,7 @@
 
         function leaveToLobby() {
             setOnlinePresence(false);
-            if (roomRef) roomRef.off();
+            detachRoomListeners();
             document.getElementById('shop-panel').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('lobby-screen').classList.remove('hidden');
@@ -1395,7 +1444,7 @@
 
             document.querySelectorAll('.shop-item-btn').forEach(btn => {
                 const item = btn.dataset.item;
-                const cost = item === 'medkit' ? 25 : item === 'battery' ? 20 : item === 'core' ? 10 : 30;
+                const cost = item === 'medkit' ? 25 : item === 'battery' ? 20 : item === 'core' ? 10 : item === 'ember' ? 25 : 30;
                 btn.disabled = !m || m.status !== 'active' || myCoins < cost;
             });
 
