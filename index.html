@@ -120,6 +120,7 @@
         .btn.amber { background: #d97706; }
         .btn.slate { background: #334155; }
         .btn.rose { background: #e11d48; }
+        .btn.purple { background: #7c3aed; }
 
         .status-line {
             margin-top: 12px;
@@ -130,21 +131,22 @@
             min-height: 20px;
         }
 
-        /* MATCH HISTORY */
-        .history-box {
-            margin-top: 18px;
+        /* FRIENDS & MATCH HISTORY */
+        .section-box {
+            margin-top: 16px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 14px;
+            padding-top: 13px;
         }
 
-        .history-header {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
+            gap: 8px;
         }
 
-        .history-title {
+        .section-title {
             font-size: 0.8rem;
             font-weight: 800;
             text-transform: uppercase;
@@ -152,15 +154,21 @@
             letter-spacing: 0.6px;
         }
 
-        .history-list {
-            max-height: 130px;
+        .friends-add-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .friends-list, .history-list {
+            max-height: 120px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
 
-        .history-item {
+        .friend-item, .history-item {
             background: #1e293b;
             border-radius: 8px;
             padding: 8px 10px;
@@ -169,6 +177,11 @@
             justify-content: space-between;
             align-items: center;
             gap: 8px;
+        }
+
+        .friend-actions {
+            display: flex;
+            gap: 5px;
         }
 
         /* ARENA & COMBAT UI */
@@ -564,6 +577,10 @@
             text-transform: uppercase;
         }
 
+        .mini-btn.sky { background: #0284c7; }
+        .mini-btn.green { background: #059669; }
+        .mini-btn.rose { background: #be123c; }
+
         .chat-search-input {
             width: 100%;
             background: #0f172a;
@@ -630,15 +647,29 @@
             </div>
 
             <div class="btn-grid">
-                <button id="create-room-btn" class="btn green">Create Room</button>
-                <button id="join-room-btn" class="btn">Join / Resume</button>
+                <button id="create-room-btn" class="btn green" type="button">Create Room</button>
+                <button id="join-room-btn" class="btn" type="button">Join / Resume</button>
             </div>
 
             <div id="lobby-status" class="status-line">Ready to connect</div>
 
-            <div class="history-box">
-                <div class="history-header">
-                    <div class="history-title">Recent Match History</div>
+            <!-- FRIENDS & INVITE SECTION -->
+            <div class="section-box">
+                <div class="section-header">
+                    <div class="section-title">Friends & Invites</div>
+                    <button id="invite-room-btn" class="mini-btn sky" type="button">Invite to Room</button>
+                </div>
+                <div class="friends-add-row">
+                    <input type="text" id="friend-name-input" maxlength="24" placeholder="Add friend username..." style="padding:8px 10px; font-size:0.84rem;">
+                    <button id="add-friend-btn" class="mini-btn green" type="button">Add</button>
+                </div>
+                <div id="friends-list" class="friends-list"></div>
+            </div>
+
+            <!-- MATCH HISTORY -->
+            <div class="section-box">
+                <div class="section-header">
+                    <div class="section-title">Recent Match History</div>
                     <button id="clear-history-btn" class="mini-btn" type="button">Clear Log</button>
                 </div>
                 <div id="history-list" class="history-list">
@@ -656,6 +687,7 @@
                     <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">ROOM:</span>
                     <span id="active-room-code" class="room-tag">------</span>
                     <button id="copy-code-btn" class="mini-btn" title="Copy Room Code" type="button">Copy</button>
+                    <button id="send-invite-btn" class="mini-btn sky" title="Post Room Invite in Chat" type="button">Invite</button>
                 </div>
 
                 <div style="display:flex; align-items:center; gap:8px;">
@@ -689,15 +721,11 @@
                         <strong style="display:block; font-size:0.85rem;">Battery — $20</strong>
                         <span style="font-size:0.74rem; color:#94a3b8;">Gain +20 Energy immediately</span>
                     </button>
-                    <button class="shop-item-btn" data-item="core" type="button">
-                        <strong style="display:block; font-size:0.85rem;">Overcharge Core — $10</strong>
-                        <span style="font-size:0.74rem; color:#94a3b8;">Gain +15 Coins & +10 Energy</span>
-                    </button>
                     <button class="shop-item-btn" data-item="aegis" type="button">
                         <strong style="display:block; font-size:0.85rem;">Aegis Shield — $30</strong>
                         <span style="font-size:0.74rem; color:#94a3b8;">Activate Guard +10 HP</span>
                     </button>
-                    <button class="shop-item-btn" data-item="ember" type="button" style="grid-column: 1 / -1;">
+                    <button class="shop-item-btn" data-item="ember" type="button">
                         <strong style="display:block; font-size:0.85rem;">Ember Bomb — $25</strong>
                         <span style="font-size:0.74rem; color:#94a3b8;">Deal 20 piercing DMG directly to opponent</span>
                     </button>
@@ -713,7 +741,10 @@
                             <span class="avatar-badge" id="p1-badge"></span>
                             <span id="p1-name">Player 1</span>
                         </div>
-                        <span id="p1-presence" class="presence-pill offline-pill">Away</span>
+                        <div style="display:flex; align-items:center; gap:5px;">
+                            <button id="add-p1-friend-btn" class="mini-btn" type="button" title="Add Player 1 as Friend">+Friend</button>
+                            <span id="p1-presence" class="presence-pill offline-pill">Away</span>
+                        </div>
                     </div>
                     <div class="stat-label"><span>HP</span><span id="p1-hp-text">100 / 100</span></div>
                     <div class="bar-track"><div id="p1-hp-bar" class="hp-fill" style="width:100%;"></div></div>
@@ -733,7 +764,10 @@
                             <span class="avatar-badge" id="p2-badge"></span>
                             <span id="p2-name">Player 2</span>
                         </div>
-                        <span id="p2-presence" class="presence-pill offline-pill">Away</span>
+                        <div style="display:flex; align-items:center; gap:5px;">
+                            <button id="add-p2-friend-btn" class="mini-btn" type="button" title="Add Player 2 as Friend">+Friend</button>
+                            <span id="p2-presence" class="presence-pill offline-pill">Away</span>
+                        </div>
                     </div>
                     <div class="stat-label"><span>HP</span><span id="p2-hp-text">100 / 100</span></div>
                     <div class="bar-track"><div id="p2-hp-bar" class="hp-fill" style="width:100%;"></div></div>
@@ -844,6 +878,7 @@
         const MAX_EP = 50;
         const TURN_COIN_BONUS = 15;
         const WIN_COIN_BONUS = 60;
+        const FRIENDS_STORAGE_KEY = "turnbound_friends_v1";
 
         let mySeat = 1; // 1 or 2
         let myName = "Player";
@@ -857,7 +892,110 @@
 
         let roomData = null;
         let matchRecorded = false;
+        let writeLock = false;
         let chatHistoryCache = [];
+
+        /* =========================================================================
+           FRIENDS & INVITE SYSTEM (LOCAL STORAGE + ROOM INVITE)
+           ========================================================================= */
+        function loadFriends() {
+            try {
+                const raw = localStorage.getItem(FRIENDS_STORAGE_KEY);
+                const list = raw ? JSON.parse(raw) : [];
+                return Array.isArray(list) ? list : [];
+            } catch (_) {
+                return [];
+            }
+        }
+
+        function saveFriends(list) {
+            try {
+                localStorage.setItem(FRIENDS_STORAGE_KEY, JSON.stringify(list));
+            } catch (_) {}
+        }
+
+        function addFriendByName(rawName) {
+            const parsed = parsePlayerName(rawName);
+            const clean = parsed.displayName;
+            if (!clean || clean === "Waiting for P2...") return;
+            const list = loadFriends();
+            if (!list.some(f => f.toLowerCase() === clean.toLowerCase())) {
+                list.push(clean);
+                saveFriends(list);
+            }
+            renderFriendsList();
+        }
+
+        function removeFriendByName(name) {
+            const list = loadFriends().filter(f => f !== name);
+            saveFriends(list);
+            renderFriendsList();
+        }
+
+        function sendRoomInvite(targetFriendName) {
+            const code = currentRoomCode || document.getElementById('room-code-input').value.trim();
+            if (!code || code.length !== 6) {
+                lobbyStatus.textContent = "Create or enter a 6-digit room code first to invite.";
+                return;
+            }
+            document.getElementById('room-code-input').value = code;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).catch(() => {});
+            }
+            const inviteText = targetFriendName
+                ? `Invited ${targetFriendName} to Room #${code}!`
+                : `Join my TURNBOUND room with code #${code}!`;
+
+            if (roomRef) {
+                sendChatMessage(inviteText);
+            }
+            lobbyStatus.textContent = `Invite ready for Room #${code} (copied to clipboard).`;
+        }
+
+        function renderFriendsList() {
+            const container = document.getElementById('friends-list');
+            const friends = loadFriends();
+            if (!friends.length) {
+                container.innerHTML = `<div class="friend-item" style="color:#94a3b8;">No friends added yet.</div>`;
+                return;
+            }
+            container.innerHTML = friends.map(name => `
+                <div class="friend-item">
+                    <strong>${escapeHtml(name)}</strong>
+                    <div class="friend-actions">
+                        <button class="mini-btn sky friend-invite-btn" data-friend="${escapeAttr(name)}" type="button">Invite</button>
+                        <button class="mini-btn rose friend-del-btn" data-friend="${escapeAttr(name)}" type="button">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.querySelectorAll('.friend-invite-btn').forEach(btn => {
+                btn.addEventListener('click', () => sendRoomInvite(btn.dataset.friend));
+            });
+            container.querySelectorAll('.friend-del-btn').forEach(btn => {
+                btn.addEventListener('click', () => removeFriendByName(btn.dataset.friend));
+            });
+        }
+
+        document.getElementById('add-friend-btn').addEventListener('click', () => {
+            const inp = document.getElementById('friend-name-input');
+            addFriendByName(inp.value);
+            inp.value = "";
+        });
+
+        document.getElementById('invite-room-btn').addEventListener('click', () => sendRoomInvite(null));
+        document.getElementById('send-invite-btn').addEventListener('click', () => sendRoomInvite(null));
+
+        document.getElementById('add-p1-friend-btn').addEventListener('click', () => {
+            const name = document.getElementById('p1-name').textContent;
+            addFriendByName(name);
+        });
+        document.getElementById('add-p2-friend-btn').addEventListener('click', () => {
+            const name = document.getElementById('p2-name').textContent;
+            addFriendByName(name);
+        });
+
+        renderFriendsList();
 
         /* =========================================================================
            [23] SECRET NAME PARSER
@@ -1100,12 +1238,13 @@
             document.getElementById('game-screen').classList.remove('hidden');
             document.getElementById('active-room-code').textContent = code;
             matchRecorded = false;
+            writeLock = false;
             updateOverdriveUI();
             renderArena();
         }
 
         /* =========================================================================
-           TURN ACTIONS & COINS
+           STABLE TRANSACTION MATCH UPDATES (NO OVERCHARGE LAG)
            ========================================================================= */
         function appendBattleLog(matchObj, line) {
             const arr = Array.isArray(matchObj.logs) ? matchObj.logs.slice(-14) : [];
@@ -1113,86 +1252,109 @@
             matchObj.logs = arr;
         }
 
+        function commitMatchTransaction(mutatorFn) {
+            if (!roomRef || writeLock) return;
+            writeLock = true;
+            setMoveButtonsDisabled(true);
+
+            roomRef.child('match').transaction(current => {
+                if (!current || current.status !== 'active') return current;
+                const copy = JSON.parse(JSON.stringify(current));
+                const ok = mutatorFn(copy);
+                if (ok === false) return current;
+                return copy;
+            }, (error, committed, snapshot) => {
+                writeLock = false;
+                if (!error && committed && snapshot && snapshot.exists()) {
+                    const updated = snapshot.val();
+                    if (updated.status === 'finished') {
+                        recordMatchHistory(updated);
+                    }
+                }
+                renderArena();
+            });
+        }
+
         document.querySelectorAll('.move-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const action = btn.dataset.action;
-                performTurnMove(action);
+                performTurnMove(btn.dataset.action);
             });
         });
 
         function performTurnMove(action) {
             if (!roomRef || !roomData || !roomData.match) return;
-            const m = JSON.parse(JSON.stringify(roomData.match));
-            if (m.status !== 'active' || m.turnSeat !== mySeat) return;
+            const useOverdrive = overdriveActive && hasOverdriveUnlocked;
+            const mult = useOverdrive ? 2 : 1;
 
-            const actor = mySeat === 1 ? m.p1 : m.p2;
-            const foe = mySeat === 1 ? m.p2 : m.p1;
-            actor.coins = actor.coins || 0;
-            foe.coins = foe.coins || 0;
+            commitMatchTransaction(m => {
+                if (m.turnSeat !== mySeat) return false;
+                const actor = mySeat === 1 ? m.p1 : m.p2;
+                const foe = mySeat === 1 ? m.p2 : m.p1;
+                actor.coins = actor.coins || 0;
+                foe.coins = foe.coins || 0;
 
-            const mult = overdriveActive && hasOverdriveUnlocked ? 2 : 1;
+                if (action === 'attack') {
+                    const rawDmg = 18 * mult;
+                    const finalDmg = foe.guard ? Math.round(rawDmg * 0.35) : rawDmg;
+                    foe.hp = Math.max(0, foe.hp - finalDmg);
+                    foe.guard = false;
+                    actor.ep = Math.min(MAX_EP, actor.ep + 10);
+                    const hitCoins = Math.max(5, Math.round(finalDmg * 0.5));
+                    actor.coins += hitCoins;
+                    m.lastAction = `${actor.name} attacked ${foe.name} for ${finalDmg} DMG (+$${hitCoins}).`;
+                    appendBattleLog(m, m.lastAction);
+                } else if (action === 'defend') {
+                    actor.guard = true;
+                    actor.ep = Math.min(MAX_EP, actor.ep + 12);
+                    m.lastAction = `${actor.name} raised Guard (-65% incoming DMG).`;
+                    appendBattleLog(m, m.lastAction);
+                } else if (action === 'heal') {
+                    const healAmount = 20 * mult;
+                    const healed = Math.min(MAX_HP - actor.hp, healAmount);
+                    actor.hp += healed;
+                    actor.ep = Math.min(MAX_EP, actor.ep + 8);
+                    m.lastAction = `${actor.name} healed +${healed} HP.`;
+                    appendBattleLog(m, m.lastAction);
+                } else if (action === 'special') {
+                    if (actor.ep < 25) return false;
+                    actor.ep -= 25;
+                    const pierceDmg = 34 * mult;
+                    foe.hp = Math.max(0, foe.hp - pierceDmg);
+                    foe.guard = false;
+                    const burstCoins = Math.max(10, Math.round(pierceDmg * 0.5));
+                    actor.coins += burstCoins;
+                    m.lastAction = `${actor.name} unleashed SPECIAL on ${foe.name} for ${pierceDmg} piercing DMG (+$${burstCoins})!`;
+                    appendBattleLog(m, m.lastAction);
+                } else if (action === 'focus') {
+                    actor.ep = Math.min(MAX_EP, actor.ep + 15);
+                    const gainedHp = Math.min(MAX_HP - actor.hp, 5);
+                    actor.hp += gainedHp;
+                    m.lastAction = `${actor.name} focused (+15 Energy, +${gainedHp} HP).`;
+                    appendBattleLog(m, m.lastAction);
+                } else {
+                    return false;
+                }
 
-            if (action === 'attack') {
-                const rawDmg = 18 * mult;
-                const finalDmg = foe.guard ? Math.round(rawDmg * 0.35) : rawDmg;
-                foe.hp = Math.max(0, foe.hp - finalDmg);
-                foe.guard = false;
-                actor.ep = Math.min(MAX_EP, actor.ep + 10);
-                const hitCoins = Math.max(5, Math.round(finalDmg * 0.5));
-                actor.coins += hitCoins;
-                m.lastAction = `${actor.name} attacked ${foe.name} for ${finalDmg} DMG (+$${hitCoins}).`;
-                appendBattleLog(m, m.lastAction);
-            } else if (action === 'defend') {
-                actor.guard = true;
-                actor.ep = Math.min(MAX_EP, actor.ep + 12);
-                m.lastAction = `${actor.name} raised Guard (-65% incoming DMG).`;
-                appendBattleLog(m, m.lastAction);
-            } else if (action === 'heal') {
-                const healAmount = 20 * mult;
-                const healed = Math.min(MAX_HP - actor.hp, healAmount);
-                actor.hp += healed;
-                actor.ep = Math.min(MAX_EP, actor.ep + 8);
-                m.lastAction = `${actor.name} healed +${healed} HP.`;
-                appendBattleLog(m, m.lastAction);
-            } else if (action === 'special') {
-                if (actor.ep < 25) return;
-                actor.ep -= 25;
-                const pierceDmg = 34 * mult;
-                foe.hp = Math.max(0, foe.hp - pierceDmg);
-                foe.guard = false;
-                const burstCoins = Math.max(10, Math.round(pierceDmg * 0.5));
-                actor.coins += burstCoins;
-                m.lastAction = `${actor.name} unleashed SPECIAL on ${foe.name} for ${pierceDmg} piercing DMG (+$${burstCoins})!`;
-                appendBattleLog(m, m.lastAction);
-            } else if (action === 'focus') {
-                actor.ep = Math.min(MAX_EP, actor.ep + 15);
-                const gainedHp = Math.min(MAX_HP - actor.hp, 5);
-                actor.hp += gainedHp;
-                m.lastAction = `${actor.name} focused (+15 Energy, +${gainedHp} HP).`;
-                appendBattleLog(m, m.lastAction);
-            }
-
-            if (foe.hp <= 0) {
-                actor.coins += WIN_COIN_BONUS;
-                m.status = 'finished';
-                m.winnerSeat = mySeat;
-                m.winnerName = actor.name;
-                m.lastAction += ` ${actor.name} wins (+$${WIN_COIN_BONUS} victory bonus)!`;
-                appendBattleLog(m, `${actor.name} won the match!`);
-                recordMatchHistory(m);
-            } else {
-                const nextSeat = mySeat === 1 ? 2 : 1;
-                const nextPlayer = nextSeat === 1 ? m.p1 : m.p2;
-                nextPlayer.coins = (nextPlayer.coins || 0) + TURN_COIN_BONUS;
-                m.turnSeat = nextSeat;
-                m.turnNumber += 1;
-            }
-
-            roomRef.child('match').set(m);
+                if (foe.hp <= 0) {
+                    actor.coins += WIN_COIN_BONUS;
+                    m.status = 'finished';
+                    m.winnerSeat = mySeat;
+                    m.winnerName = actor.name;
+                    m.lastAction += ` ${actor.name} wins (+$${WIN_COIN_BONUS} victory bonus)!`;
+                    appendBattleLog(m, `${actor.name} won the match!`);
+                } else {
+                    const nextSeat = mySeat === 1 ? 2 : 1;
+                    const nextPlayer = nextSeat === 1 ? m.p1 : m.p2;
+                    nextPlayer.coins = (nextPlayer.coins || 0) + TURN_COIN_BONUS;
+                    m.turnSeat = nextSeat;
+                    m.turnNumber += 1;
+                }
+                return true;
+            });
         }
 
         /* =========================================================================
-           TACTICAL SHOP
+           TACTICAL SHOP (MEDKIT, BATTERY, AEGIS, EMBER BOMB)
            ========================================================================= */
         document.getElementById('toggle-shop-btn').addEventListener('click', () => {
             document.getElementById('shop-panel').classList.toggle('hidden');
@@ -1206,57 +1368,50 @@
 
         function buyShopItem(itemId) {
             if (!roomRef || !roomData || !roomData.match) return;
-            const m = JSON.parse(JSON.stringify(roomData.match));
-            if (m.status !== 'active') return;
+            commitMatchTransaction(m => {
+                const buyer = mySeat === 1 ? m.p1 : m.p2;
+                const foe = mySeat === 1 ? m.p2 : m.p1;
+                buyer.coins = buyer.coins || 0;
 
-            const buyer = mySeat === 1 ? m.p1 : m.p2;
-            const foe = mySeat === 1 ? m.p2 : m.p1;
-            buyer.coins = buyer.coins || 0;
-
-            if (itemId === 'medkit') {
-                if (buyer.coins < 25) return;
-                buyer.coins -= 25;
-                const healed = Math.min(MAX_HP - buyer.hp, 35);
-                buyer.hp += healed;
-                m.lastAction = `${buyer.name} bought Medkit (+${healed} HP).`;
-                appendBattleLog(m, m.lastAction);
-            } else if (itemId === 'battery') {
-                if (buyer.coins < 20) return;
-                buyer.coins -= 20;
-                buyer.ep = Math.min(MAX_EP, buyer.ep + 20);
-                m.lastAction = `${buyer.name} bought Battery (+20 Energy).`;
-                appendBattleLog(m, m.lastAction);
-            } else if (itemId === 'core') {
-                if (buyer.coins < 10) return;
-                buyer.coins -= 10;
-                buyer.coins += 15;
-                buyer.ep = Math.min(MAX_EP, buyer.ep + 10);
-                m.lastAction = `${buyer.name} used Overcharge Core (+$15 net & +10 Energy).`;
-                appendBattleLog(m, m.lastAction);
-            } else if (itemId === 'aegis') {
-                if (buyer.coins < 30) return;
-                buyer.coins -= 30;
-                buyer.guard = true;
-                buyer.hp = Math.min(MAX_HP, buyer.hp + 10);
-                m.lastAction = `${buyer.name} equipped Aegis Shield (Guard +10 HP).`;
-                appendBattleLog(m, m.lastAction);
-            } else if (itemId === 'ember') {
-                if (buyer.coins < 25) return;
-                buyer.coins -= 25;
-                foe.hp = Math.max(0, foe.hp - 20);
-                m.lastAction = `${buyer.name} threw Ember Bomb at ${foe.name} for 20 piercing DMG!`;
-                appendBattleLog(m, m.lastAction);
-                if (foe.hp <= 0) {
-                    buyer.coins += WIN_COIN_BONUS;
-                    m.status = 'finished';
-                    m.winnerSeat = mySeat;
-                    m.winnerName = buyer.name;
-                    m.lastAction += ` ${buyer.name} wins (+$${WIN_COIN_BONUS} victory bonus)!`;
-                    recordMatchHistory(m);
+                if (itemId === 'medkit') {
+                    if (buyer.coins < 25) return false;
+                    buyer.coins -= 25;
+                    const healed = Math.min(MAX_HP - buyer.hp, 35);
+                    buyer.hp += healed;
+                    m.lastAction = `${buyer.name} bought Medkit (+${healed} HP).`;
+                    appendBattleLog(m, m.lastAction);
+                } else if (itemId === 'battery') {
+                    if (buyer.coins < 20) return false;
+                    buyer.coins -= 20;
+                    buyer.ep = Math.min(MAX_EP, buyer.ep + 20);
+                    m.lastAction = `${buyer.name} bought Battery (+20 Energy).`;
+                    appendBattleLog(m, m.lastAction);
+                } else if (itemId === 'aegis') {
+                    if (buyer.coins < 30) return false;
+                    buyer.coins -= 30;
+                    buyer.guard = true;
+                    buyer.hp = Math.min(MAX_HP, buyer.hp + 10);
+                    m.lastAction = `${buyer.name} equipped Aegis Shield (Guard +10 HP).`;
+                    appendBattleLog(m, m.lastAction);
+                } else if (itemId === 'ember') {
+                    if (buyer.coins < 25) return false;
+                    buyer.coins -= 25;
+                    foe.hp = Math.max(0, foe.hp - 20);
+                    m.lastAction = `${buyer.name} threw Ember Bomb at ${foe.name} for 20 piercing DMG!`;
+                    appendBattleLog(m, m.lastAction);
+                    if (foe.hp <= 0) {
+                        buyer.coins += WIN_COIN_BONUS;
+                        m.status = 'finished';
+                        m.winnerSeat = mySeat;
+                        m.winnerName = buyer.name;
+                        m.lastAction += ` ${buyer.name} wins (+$${WIN_COIN_BONUS} victory bonus)!`;
+                        appendBattleLog(m, `${buyer.name} won the match!`);
+                    }
+                } else {
+                    return false;
                 }
-            }
-
-            roomRef.child('match').set(m);
+                return true;
+            });
         }
 
         /* =========================================================================
@@ -1264,21 +1419,19 @@
            ========================================================================= */
         document.getElementById('forfeit-btn').addEventListener('click', () => {
             if (!roomRef || !roomData || !roomData.match) return;
-            const m = JSON.parse(JSON.stringify(roomData.match));
-            if (m.status !== 'active') return;
+            commitMatchTransaction(m => {
+                const winSeat = mySeat === 1 ? 2 : 1;
+                const winPlayer = winSeat === 1 ? m.p1 : m.p2;
+                const losePlayer = mySeat === 1 ? m.p1 : m.p2;
 
-            const winSeat = mySeat === 1 ? 2 : 1;
-            const winPlayer = winSeat === 1 ? m.p1 : m.p2;
-            const losePlayer = mySeat === 1 ? m.p1 : m.p2;
-
-            winPlayer.coins = (winPlayer.coins || 0) + WIN_COIN_BONUS;
-            m.status = 'finished';
-            m.winnerSeat = winSeat;
-            m.winnerName = winPlayer.name;
-            m.lastAction = `${losePlayer.name} forfeited. ${winPlayer.name} wins!`;
-            appendBattleLog(m, m.lastAction);
-            recordMatchHistory(m);
-            roomRef.child('match').set(m);
+                winPlayer.coins = (winPlayer.coins || 0) + WIN_COIN_BONUS;
+                m.status = 'finished';
+                m.winnerSeat = winSeat;
+                m.winnerName = winPlayer.name;
+                m.lastAction = `${losePlayer.name} forfeited. ${winPlayer.name} wins!`;
+                appendBattleLog(m, m.lastAction);
+                return true;
+            });
         });
 
         function recordMatchHistory(finishedMatch) {
@@ -1390,6 +1543,7 @@
             document.getElementById('shop-panel').classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('lobby-screen').classList.remove('hidden');
+            renderFriendsList();
             document.getElementById('lobby-status').textContent = currentRoomCode
                 ? `Room ${currentRoomCode} saved. Re-enter code anytime to resume.`
                 : "Ready to connect";
@@ -1444,8 +1598,8 @@
 
             document.querySelectorAll('.shop-item-btn').forEach(btn => {
                 const item = btn.dataset.item;
-                const cost = item === 'medkit' ? 25 : item === 'battery' ? 20 : item === 'core' ? 10 : item === 'ember' ? 25 : 30;
-                btn.disabled = !m || m.status !== 'active' || myCoins < cost;
+                const cost = item === 'medkit' ? 25 : item === 'battery' ? 20 : item === 'ember' ? 25 : 30;
+                btn.disabled = writeLock || !m || m.status !== 'active' || myCoins < cost;
             });
 
             const banner = document.getElementById('turn-banner');
@@ -1497,7 +1651,7 @@
             movesPanel.classList.remove('hidden');
             gameoverPanel.classList.add('hidden');
 
-            const isMyTurn = m.turnSeat === mySeat;
+            const isMyTurn = !writeLock && m.turnSeat === mySeat;
             const activePlayer = m.turnSeat === 1 ? p1State : p2State;
             const myState = mySeat === 1 ? p1State : p2State;
 
@@ -1507,7 +1661,9 @@
                 setMoveButtonsDisabled(false);
                 document.getElementById('act-special').disabled = myState.ep < 25;
             } else {
-                banner.textContent = `WAITING FOR ${activePlayer.name.toUpperCase()}'S TURN (YOU CAN CHAT ANYTIME)`;
+                banner.textContent = writeLock
+                    ? "SYNCING MOVE..."
+                    : `WAITING FOR ${activePlayer.name.toUpperCase()}'S TURN (YOU CAN CHAT ANYTIME)`;
                 banner.className = "turn-banner turn-waiting";
                 setMoveButtonsDisabled(true);
             }
